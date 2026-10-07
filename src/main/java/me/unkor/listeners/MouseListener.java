@@ -8,6 +8,7 @@ public class MouseListener {
     private double scrollX, scrollY;
     private double xPos, yPos, lastX, lastY;
 
+    //3 потому что это минимальнок количество кнопок мыши (и 350 для клавиатуры...)
     private boolean mouseButtonPressed[] = new boolean[3];
     private boolean isDragging;
 
@@ -100,7 +101,10 @@ public class MouseListener {
         return isDagging();
     }
 
+    //функция для получнение нажатие клавишь мыши
     public static boolean mouseButtonDown(int button) {
+        //проверка на количества клавишь мыши
+        //нужно для предотврашение ошибок
         if (button < get().mouseButtonPressed.length)
             return get().mouseButtonPressed[button];
         else

@@ -5,6 +5,7 @@ import me.unkor.listeners.KeyListener;
 
 import java.awt.event.KeyEvent;
 
+//редактирование сцены
 public class LevelEditorScene extends Scene {
     private boolean changingScene = false;
     private float timeToChangingScene = 2.0f;

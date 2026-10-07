@@ -1,5 +1,10 @@
 package me.unkor.listeners;
 
+/*
+* TODO:
+*  1. Обрытный вызов для оброботки сигналов джостика
+*/
+
 public class GamepadListener {
     private static GamepadListener instance;
 
