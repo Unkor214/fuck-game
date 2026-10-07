@@ -1,5 +1,11 @@
-package me.unkor.jade;
+package me.unkor;
 
+import me.unkor.listeners.KeyListener;
+import me.unkor.listeners.MouseListener;
+import me.unkor.scene.LevelEditorScene;
+import me.unkor.scene.LevelScene;
+import me.unkor.scene.Scene;
+import me.unkor.util.Time;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
@@ -15,8 +21,13 @@ public class Window {
     //окно
     private long glfwWindow;
 
+    private float r, g, b, a;
+    private boolean fadeToBlack = false;
+
     //пустой класс окна
     private static  Window window = null;
+
+    private static Scene currentScene;
 
     private Window() {
         //1920x1080
@@ -24,6 +35,26 @@ public class Window {
         this.height = 1080;
 
         this.title = "Super mario";
+
+        r = 1;
+        b = 1;
+        g = 1;
+        a = 1;
+    }
+
+    public static void changeScene(int newScene) {
+        switch (newScene) {
+            case 0 :
+                currentScene = new LevelEditorScene();
+
+                break;
+            case 1 :
+                currentScene = new LevelScene();
+                break;
+            default:
+                assert false : "Invalid scene '" + newScene + "'";
+                break;
+        }
     }
 
     public static Window get() {
@@ -71,8 +102,16 @@ public class Window {
         glfwWindow = glfwCreateWindow(this.width, this.height, this.title,
                 NULL, NULL);
         //Ввывод ошибки при не удачном создание окна
-        if (glfwWindow == NULL)
+        if (glfwWindow == NULL) {
             throw new IllegalStateException("Window has been not create");
+        }
+
+        //Обратные вызовы мыши
+        glfwSetCursorPosCallback(glfwWindow, MouseListener::mousePosCallback); //позиция x -> mousePosCallback
+        glfwSetMouseButtonCallback(glfwWindow, MouseListener::mouseButtonCallback); //кнопки x -> mouseButtonCallback
+        glfwSetScrollCallback(glfwWindow, MouseListener::scrollCallback); //прокрутка x -> scrollCallback
+        //Обратные вызовы клавиатуры
+        glfwSetKeyCallback(glfwWindow, KeyListener::keyCallback);
 
         //Выставление контекста на главное окно
         glfwMakeContextCurrent(glfwWindow);
@@ -94,14 +133,32 @@ public class Window {
 
     //игровой цикл
     public void loop() {
+        //начало и конец времени кадров
+        float beginTime = Time.getTime();
+        float endTime = Time.getTime();
+
         //пока окно не закрыто
         while (!glfwWindowShouldClose(glfwWindow)) {
             glfwPollEvents();
 
-            glClearColor(1.0f, 0.5f, 0.0f, 1.0f);
+            glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            if (fadeToBlack) {
+                r = Math.max(r - 0.01f, 0);
+                g = Math.max(g - 0.01f, 0);
+                b = Math.max(b - 0.01f, 0);
+            }
+
+            if (KeyListener.isKeyPressed(GLFW_KEY_SPACE))
+                fadeToBlack = true;
+
             glfwSwapBuffers(glfwWindow);
+
+            //дельта времени (звучит пафосно)
+            endTime = Time.getTime();
+            float deltaTime = endTime - beginTime;
+            beginTime = Time.getTime();
         }
     }
 }

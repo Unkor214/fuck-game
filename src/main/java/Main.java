@@ -1,6 +1,4 @@
-package me.unkor;
-
-import me.unkor.jade.Window;
+import me.unkor.Window;
 
 public class Main {
     public static void main(String[] args) {

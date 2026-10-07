@@ -1,6 +1,4 @@
-package me.unkor;
-
-import org.lwjgl.glfw.GLFW;
+package me.unkor.listeners;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;

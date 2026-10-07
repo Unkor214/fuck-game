@@ -1,4 +1,4 @@
-package me.unkor;
+package me.unkor.listeners;
 
 import static org.lwjgl.glfw.GLFW.*;
 
