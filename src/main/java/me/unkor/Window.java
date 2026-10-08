@@ -21,8 +21,7 @@ public class Window {
     //окно
     private long glfwWindow;
 
-    private float r, g, b, a;
-    private boolean fadeToBlack = false;
+    public float r, g, b, a;
 
     //пустой класс окна
     private static  Window window = null;
@@ -38,8 +37,8 @@ public class Window {
         this.title = "Fuck-game";
 
         r = 1;
-        b = 1;
         g = 1;
+        b = 1;
         a = 1;
     }
 
@@ -119,6 +118,8 @@ public class Window {
         //в-синх.
         glfwSwapInterval(1);
 
+        Window.changeScene(0);
+
         //показать окно
         glfwShowWindow(glfwWindow);
 
@@ -137,6 +138,7 @@ public class Window {
         //начало и конец времени кадров
         float beginTime = Time.getTime();
         float endTime = Time.getTime();
+        float deltaTime = -1.0f;
 
         //пока окно не закрыто
         while (!glfwWindowShouldClose(glfwWindow)) {
@@ -145,11 +147,14 @@ public class Window {
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            if (deltaTime >= 0)
+                currentScene.update(deltaTime);
+
             glfwSwapBuffers(glfwWindow);
 
             //дельта времени (звучит пафосно)
             endTime = Time.getTime();
-            float deltaTime = endTime - beginTime;
+            deltaTime = endTime - beginTime;
             beginTime = Time.getTime();
         }
     }
