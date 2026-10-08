@@ -30,11 +30,12 @@ public class Window {
     private static Scene currentScene;
 
     private Window() {
-        //1920x1080
+        //(default) 1920x1080
         this.width = 1920;
         this.height = 1080;
 
-        this.title = "Super mario";
+        //(default)
+        this.title = "Fuck-game";
 
         r = 1;
         b = 1;
@@ -144,15 +145,6 @@ public class Window {
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            if (fadeToBlack) {
-                r = Math.max(r - 0.01f, 0);
-                g = Math.max(g - 0.01f, 0);
-                b = Math.max(b - 0.01f, 0);
-            }
-
-            if (KeyListener.isKeyPressed(GLFW_KEY_SPACE))
-                fadeToBlack = true;
-
             glfwSwapBuffers(glfwWindow);
 
             //дельта времени (звучит пафосно)
@@ -160,5 +152,14 @@ public class Window {
             float deltaTime = endTime - beginTime;
             beginTime = Time.getTime();
         }
+    }
+
+    public void setResolve(int w, int h) {
+        Window.get().width = w;
+        Window.get().height = h;
+    }
+
+    public void setTitle(String title) {
+        Window.get().title = title;
     }
 }
