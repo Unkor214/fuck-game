@@ -7,6 +7,6 @@ public class Time {
     //функция получение текушего времени
     public static float getTime() {
         //текушее время
-        return (float)((System.nanoTime() - timeStarted) * 1E-9);
+        return (float)((System.nanoTime() - timeStarted) * 1E-9); //1 * (10^-9) (для себя чисто (я идиот))
     }
 }

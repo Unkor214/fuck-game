@@ -9,6 +9,8 @@ import me.unkor.util.Time;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
+import java.util.HashMap;
+
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -27,6 +29,7 @@ public class Window {
     private static  Window window = null;
 
     private static Scene currentScene;
+    //private static HashMap<String, Scene> sceneHashMap = new HashMap<>();
 
     private Window() {
         //(default) 1920x1080
@@ -46,16 +49,23 @@ public class Window {
         switch (newScene) {
             case 0 :
                 currentScene = new LevelEditorScene();
-
+                currentScene.init();
                 break;
             case 1 :
                 currentScene = new LevelScene();
+                currentScene.init();
                 break;
             default:
                 assert false : "Invalid scene '" + newScene + "'";
                 break;
         }
     }
+
+    //Пока что не используется
+    /*
+    public static void addScene(Scene scene, String name) {
+        sceneHashMap.put(name, scene);
+    }*/
 
     public static Window get() {
         //если переменная окна пустая
@@ -68,8 +78,6 @@ public class Window {
 
     //фун. запуска
     public void run() {
-        System.out.println("Hello, lwjgl");
-
         init();
         loop();
 
