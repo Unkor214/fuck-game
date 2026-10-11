@@ -1,11 +1,13 @@
 package me.unkor.scene;
 
-import me.unkor.Window;
-import me.unkor.listeners.KeyListener;
+import org.lwjgl.BufferUtils;
 
-import java.awt.event.KeyEvent;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 //редактирование сцены
 public class LevelEditorScene extends Scene {
@@ -31,6 +33,20 @@ public class LevelEditorScene extends Scene {
             "}";
 
     private int vertexID, fragmentID, shaderProgram;
+    private int vaoID, vboID, eboID;
+
+    private float[] vertexArray = {
+            // позиция                // цвет
+            0.5f, -0.5f,  0.0f,       1.0f, 0.0f, 0.0f, 1.0f,// 0
+            -0.5f, 0.5f,  0.0f,       0.0f, 1.0f, 0.0f, 1.0f,// 1
+            0.5f, 0.5f,  0.0f ,       0.0f, 0.0f, 1.0f, 1.0f,// 2
+            -5.0f, -5.0f, 0.0f,       1.0f, 1.0f, 0.0f, 1.0f,// 3
+    };
+
+    private int[] elementArray = {
+            2, 1, 0,
+            0, 1, 3
+    };
 
     public LevelEditorScene() {
 
@@ -57,7 +73,7 @@ public class LevelEditorScene extends Scene {
         // Шейдер фрагментов
         fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
         // Ссылка шейдера в Сибирь
-        glShaderSource(fragmentID, vertexShaderSrc);
+        glShaderSource(fragmentID, fragmentSgaderSrc);
         glCompileShader(fragmentID);
 
         success = glGetShaderi(fragmentID, GL_COMPILE_STATUS);
@@ -81,6 +97,27 @@ public class LevelEditorScene extends Scene {
             System.out.println(glGetShaderInfoLog(shaderProgram, len));
             assert false : "";
         }
+
+        // генерация VAO и VBO
+        vaoID = glGenVertexArrays();
+        glBindVertexArray(vaoID);
+
+        // Создание буфера с пл. точкой
+        FloatBuffer vertexBuffer = BufferUtils.createFloatBuffer(vertexArray.length);
+        vertexBuffer.put(vertexArray).flip();
+
+        // Создание VBO и загрузка вершиного буфера
+        vboID = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vboID);
+        glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
+
+        // Создание чел. числ. буфера
+        IntBuffer elementBuffer = BufferUtils.createIntBuffer(elementArray.length);
+        elementBuffer.put(elementBuffer);
+
+        eboID = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementBuffer, GL_STATIC_DRAW);
     }
 
     @Override

@@ -126,8 +126,6 @@ public class Window {
         //в-синх.
         glfwSwapInterval(1);
 
-        Window.changeScene(0);
-
         //показать окно
         glfwShowWindow(glfwWindow);
 
@@ -139,6 +137,9 @@ public class Window {
         * и другими контекстами
         */
         GL.createCapabilities();
+
+        // смена сцены на основную
+        Window.changeScene(0);
     }
 
     //игровой цикл
