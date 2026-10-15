@@ -54,49 +54,6 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void init() {
-        // компоновка и линковка
-
-        // Шейдер вершин
-        vertexID = glCreateShader(GL_VERTEX_SHADER);
-        // Ссылка шейдера в Сибирь
-        glShaderSource(vertexID, vertexShaderSrc);
-        glCompileShader(vertexID);
-
-        int success = glGetShaderi(vertexID, GL_COMPILE_STATUS);
-        if (success == GL_FALSE) {
-            int len = glGetShaderi(vertexID, GL_INFO_LOG_LENGTH);
-            System.out.println("ERROR : 'default.glsl'\n\tVertex shader compiling err");
-            System.out.println(glGetShaderInfoLog(vertexID, len));
-            assert false : "";
-        }
-
-        // Шейдер фрагментов
-        fragmentID = glCreateShader(GL_FRAGMENT_SHADER);
-        // Ссылка шейдера в Сибирь
-        glShaderSource(fragmentID, fragmentSgaderSrc);
-        glCompileShader(fragmentID);
-
-        success = glGetShaderi(fragmentID, GL_COMPILE_STATUS);
-        if (success == GL_FALSE) {
-            int len = glGetShaderi(fragmentID, GL_INFO_LOG_LENGTH);
-            System.out.println("ERROR : 'default.glsl'\n\tFragment shader compiling err");
-            System.out.println(glGetShaderInfoLog(fragmentID, len));
-            assert false : "";
-        }
-
-        // Линковка
-        shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexID);
-        glAttachShader(shaderProgram, fragmentID);
-        glLinkProgram(shaderProgram);
-
-        success = glGetProgrami(shaderProgram, GL_LINK_STATUS);
-        if (success == GL_FALSE) {
-            int len = glGetProgrami(shaderProgram, GL_INFO_LOG_LENGTH);
-            System.out.println("ERROR : 'default.glsl'\n\tShader linking err");
-            System.out.println(glGetShaderInfoLog(shaderProgram, len));
-            assert false : "";
-        }
 
         // генерация VAO и VBO
         vaoID = glGenVertexArrays();
@@ -111,7 +68,7 @@ public class LevelEditorScene extends Scene {
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
         glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
 
-        // Создание чел. числ. буфера
+        // Создание цел. числ. буфера
         IntBuffer elementBuffer = BufferUtils.createIntBuffer(elementArray.length);
         elementBuffer.put(elementArray).flip();
 
