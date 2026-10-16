@@ -1,6 +1,10 @@
 package me.unkor.render;
 
+import org.joml.Matrix4f;
+import org.lwjgl.BufferUtils;
+
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -49,9 +53,6 @@ public class Shader {
             e.printStackTrace();
             assert false : "Error : Shader path '" + pathToFile + "' is invalid";
         }
-
-        System.out.println(vertexSrc);
-        System.out.println(fragmentSrc);
     }
 
     public void compile() {
@@ -99,6 +100,13 @@ public class Shader {
             System.out.println(glGetShaderInfoLog(shaderProgramID, len));
             assert false : "";
         }
+    }
+
+    public void uploadMat4f (String varName, Matrix4f mat4f) {
+        int varLocation = glGetUniformLocation(shaderProgramID, varName);
+        FloatBuffer matBuffer = BufferUtils.createFloatBuffer(16);
+        mat4f.get(matBuffer);
+        glUniformMatrix4fv(varLocation, false, matBuffer);
     }
 
     public void use() {

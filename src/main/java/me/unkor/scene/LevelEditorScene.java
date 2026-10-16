@@ -1,46 +1,27 @@
 package me.unkor.scene;
 
+import me.unkor.Camera;
+import me.unkor.render.Shader;
+import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL30.*;
 
 //редактирование сцены
 public class LevelEditorScene extends Scene {
-    private String vertexShaderSrc = "#version 330 core\n" +
-            "layout (location=0) in vec3 aPos;\n" +
-            "layout (location=1) in vec4 aColor;\n" +
-            "\n" +
-            "out vec4 fColor;\n" +
-            "\n" +
-            "void main() {\n" +
-            "    fColor = aColor;\n" +
-            "    gl_Position = vec4(aPos, 1.0);\n" +
-            "}\n";
-
-    private String fragmentSgaderSrc = "#version 330 core\n" +
-            "\n" +
-            "in vec4 fColor;\n" +
-            "\n" +
-            "out vec4 color;\n" +
-            "\n" +
-            "void main() {\n" +
-            "    color = fColor;\n" +
-            "}";
-
-    private int vertexID, fragmentID, shaderProgram;
     private int vaoID, vboID, eboID;
+    private Shader defaultShader;
 
     private float[] vertexArray = {
             // позиция                // цвет
-            0.1f, -0.1f,  0.0f,       1.0f, 0.0f, 0.0f, 1.0f,// 0
-            -0.1f,  0.1f,  0.0f,       0.0f, 1.0f, 0.0f, 1.0f,// 1
-            0.1f, 0.1f,  0.0f ,       0.0f, 0.0f, 1.0f, 1.0f,// 2
-            -0.1f, -0.1f, 0.0f,       1.0f, 1.0f, 0.0f, 1.0f,// 3
+            100.5f, 0.5f,  0.0f,       1.0f, 0.0f, 0.0f, 1.0f,// 0
+            0.5f,  100.0f,  0.0f,       0.0f, 1.0f, 0.0f, 1.0f,// 1
+            100.0f, 100.0f,  0.0f ,       0.0f, 0.0f, 1.0f, 1.0f,// 2
+            0.5f, 0.5f, 0.0f,       1.0f, 1.0f, 0.0f, 1.0f,// 3
     };
 
     private int[] elementArray = {
@@ -54,6 +35,10 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void init() {
+        this.camera = new Camera(new Vector2f());
+
+        defaultShader = new Shader("assets/shaders/default.glsl");
+        defaultShader.compile();
 
         // генерация VAO и VBO
         vaoID = glGenVertexArrays();
@@ -92,7 +77,12 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void update(float dt) {
-        glUseProgram(shaderProgram);
+        camera.position.x -= dt * 50.0f;
+
+        defaultShader.use();
+        defaultShader.uploadMat4f("uProjMatrix", camera.getProjectionMatrix());
+        defaultShader.uploadMat4f("uViewMatrix", camera.getViewMatrix());
+
         glBindVertexArray(vaoID);
 
         glEnableVertexAttribArray(0);
@@ -105,6 +95,6 @@ public class LevelEditorScene extends Scene {
 
         glBindVertexArray(0);
 
-        glUseProgram(0);
+        defaultShader.detach();
     }
 }
