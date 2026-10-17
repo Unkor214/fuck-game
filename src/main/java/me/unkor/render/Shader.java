@@ -1,9 +1,10 @@
 package me.unkor.render;
 
-import org.joml.Matrix4f;
+import org.joml.*;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,6 +14,7 @@ import static org.lwjgl.opengl.GL20.*;
 
 public class Shader {
     private int shaderProgramID;
+    private boolean usage = false;
 
     private String vertexSrc;
     private String fragmentSrc;
@@ -102,18 +104,95 @@ public class Shader {
         }
     }
 
-    public void uploadMat4f (String varName, Matrix4f mat4f) {
-        int varLocation = glGetUniformLocation(shaderProgramID, varName);
+    public void use() {
+        if (!usage) {
+            glUseProgram(shaderProgramID);
+            usage = true;
+        }
+    }
+
+    public void detach() {
+        glUseProgram(0);
+        usage = false;
+    }
+
+    public <T> void uploadUniform(String type, String name, T value) {
+        try {
+            switch (type) {
+                case "i" :
+                    uploadInt(name, (Integer) value);
+                    break;
+                case "f" :
+                    uploadFloat(name, (float) value);
+                    break;
+                case "mat4f" :
+                    uploadMat4f(name, (Matrix4f) value);
+                    break;
+                case "mat3f" :
+                    uploadMat3f(name, (Matrix3f) value);
+                    break;
+                case "vec4f" :
+                    uploadVec4f(name, (Vector4f) value);
+                    break;
+                case "vec3f" :
+                    uploadVec3f(name, (Vector3f) value);
+                    break;
+                case "vec2f" :
+                    uploadVec2f(name, (Vector2f) value);
+                    break;
+                default :
+                    assert false : "Error : invalid for upload uniform";
+                    break;
+            }
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            assert false : "Error : data type and user chose data, in 'uploadUniform', has mismatch";
+        }
+    }
+
+    public void uploadMat4f(String name, Matrix4f mat4f) {
+        int varLocation = glGetUniformLocation(shaderProgramID, name);
+        use();
         FloatBuffer matBuffer = BufferUtils.createFloatBuffer(16);
         mat4f.get(matBuffer);
         glUniformMatrix4fv(varLocation, false, matBuffer);
     }
 
-    public void use() {
-        glUseProgram(shaderProgramID);
+    public void uploadMat3f(String name, Matrix3f mat3f) {
+        int varLocation = glGetUniformLocation(shaderProgramID, name);
+        use();
+        FloatBuffer matBuffer = BufferUtils.createFloatBuffer(9);
+        mat3f.get(matBuffer);
+        glUniformMatrix3fv(varLocation, false, matBuffer);
     }
 
-    public void detach() {
-        glUseProgram(0);
+    public void uploadVec4f(String name, Vector4f vec) {
+        int varLocation = glGetUniformLocation(shaderProgramID, name);
+        use();
+        glUniform4f(varLocation, vec.x, vec.y, vec.z, vec.w);
+    }
+
+    public void uploadVec3f(String name, Vector3f vec) {
+        int varLocation = glGetUniformLocation(shaderProgramID, name);
+        use();
+        glUniform3f(varLocation, vec.x, vec.y, vec.z);
+    }
+
+    public void uploadVec2f(String name, Vector2f vec) {
+        int varLocation = glGetUniformLocation(shaderProgramID, name);
+        use();
+        glUniform2f(varLocation, vec.x, vec.y);
+    }
+
+    public void uploadFloat(String name, float value) {
+        int varLocation = glGetUniformLocation(shaderProgramID, name);
+        use();
+        glUniform1f(varLocation, value);
+    }
+
+    public void uploadInt(String name, int value) {
+        int varLocation = glGetUniformLocation(shaderProgramID, name);
+        use();
+        glUniform1i(varLocation, value);
     }
 }

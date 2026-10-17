@@ -1,4 +1,4 @@
-import me.unkor.Window;
+package me.unkor;
 
 public class Main {
     public static void main(String[] args) {

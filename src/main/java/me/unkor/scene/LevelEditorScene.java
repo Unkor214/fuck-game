@@ -2,6 +2,7 @@ package me.unkor.scene;
 
 import me.unkor.Camera;
 import me.unkor.render.Shader;
+import me.unkor.util.Time;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 
@@ -82,6 +83,7 @@ public class LevelEditorScene extends Scene {
         defaultShader.use();
         defaultShader.uploadMat4f("uProjMatrix", camera.getProjectionMatrix());
         defaultShader.uploadMat4f("uViewMatrix", camera.getViewMatrix());
+        defaultShader.uploadUniform("f", "uTime", Time.getTime());
 
         glBindVertexArray(vaoID);
 
