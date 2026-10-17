@@ -104,6 +104,7 @@ public class Shader {
         }
     }
 
+    //использование шейдорной программы
     public void use() {
         if (!usage) {
             glUseProgram(shaderProgramID);
@@ -111,11 +112,13 @@ public class Shader {
         }
     }
 
+    //отключение шейдорной программы
     public void detach() {
         glUseProgram(0);
         usage = false;
     }
 
+    //говно код для удобство, выполняет все опирации загрузки
     public <T> void uploadUniform(String type, String name, T value) {
         try {
             switch (type) {
@@ -150,6 +153,7 @@ public class Shader {
         }
     }
 
+    //Загрузка 4 мерной мтриции
     public void uploadMat4f(String name, Matrix4f mat4f) {
         int varLocation = glGetUniformLocation(shaderProgramID, name);
         use();
@@ -158,6 +162,7 @@ public class Shader {
         glUniformMatrix4fv(varLocation, false, matBuffer);
     }
 
+    //Загрузка 3 мерной матриции
     public void uploadMat3f(String name, Matrix3f mat3f) {
         int varLocation = glGetUniformLocation(shaderProgramID, name);
         use();
@@ -166,36 +171,42 @@ public class Shader {
         glUniformMatrix3fv(varLocation, false, matBuffer);
     }
 
+    //Загрузка 4 мерногно вектора
     public void uploadVec4f(String name, Vector4f vec) {
         int varLocation = glGetUniformLocation(shaderProgramID, name);
         use();
         glUniform4f(varLocation, vec.x, vec.y, vec.z, vec.w);
     }
 
+    //Загрузка 3 мерного вектора
     public void uploadVec3f(String name, Vector3f vec) {
         int varLocation = glGetUniformLocation(shaderProgramID, name);
         use();
         glUniform3f(varLocation, vec.x, vec.y, vec.z);
     }
 
+    //Загрузка 2 мерного вектора
     public void uploadVec2f(String name, Vector2f vec) {
         int varLocation = glGetUniformLocation(shaderProgramID, name);
         use();
         glUniform2f(varLocation, vec.x, vec.y);
     }
 
+    //Загрузка числа с павуший запятой
     public void uploadFloat(String name, float value) {
         int varLocation = glGetUniformLocation(shaderProgramID, name);
         use();
         glUniform1f(varLocation, value);
     }
 
+    //Загрузка целого числа
     public void uploadInt(String name, int value) {
         int varLocation = glGetUniformLocation(shaderProgramID, name);
         use();
         glUniform1i(varLocation, value);
     }
 
+    //Загрузка текстуры
     public void uploadTexture(String name, int slot) {
         int varLocation = glGetUniformLocation(shaderProgramID, name);
         use();

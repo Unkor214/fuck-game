@@ -11,11 +11,12 @@ import me.unkor.fuck.entity.system.GameObject;
 import java.util.ArrayList;
 import java.util.List;
 
-//классс сцены, создан для оброботки физики и т.д
 public abstract class Scene {
     protected Camera camera;
+    //создано для первого запуска, чтобы добавить объект на сцену
     private boolean isRunning = false;
 
+    //список всех игровых объектов на сцене
     protected List<GameObject> gameObjects = new ArrayList<>();
 
     public Scene() {
@@ -26,6 +27,7 @@ public abstract class Scene {
 
     }
 
+    //нужен для запуска всех объектов на сцене
     public void start() {
         for (GameObject go : gameObjects) {
             go.start();
@@ -33,6 +35,7 @@ public abstract class Scene {
         isRunning = true;
     }
 
+    //нужен для добавления объекта на сцену
     public void addGameObjectToScene(GameObject go) {
         if (!isRunning) {
             gameObjects.add(go);
