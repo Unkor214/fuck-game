@@ -1,6 +1,9 @@
 package me.unkor.scene;
 
 import me.unkor.Camera;
+import me.unkor.fuck.entity.components.FontRender;
+import me.unkor.fuck.entity.components.SpriteRender;
+import me.unkor.fuck.entity.system.GameObject;
 import me.unkor.render.Shader;
 import me.unkor.render.Texture;
 import me.unkor.util.Time;
@@ -18,6 +21,9 @@ public class LevelEditorScene extends Scene {
     private int vaoID, vboID, eboID;
     private Shader defaultShader;
     private Texture testTexture;
+
+    private GameObject testObj;
+    private boolean firstTime = true;
 
     private float[] vertexArray = {
             // позиция                // цвет
@@ -38,6 +44,12 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void init() {
+        System.out.println("creat test obj");
+        this.testObj = new GameObject("test object");
+        this.testObj.addComponent(new SpriteRender());
+        this.testObj.addComponent(new FontRender());
+        this.addGameObjectToScene(this.testObj);
+
         this.camera = new Camera(new Vector2f());
         this.testTexture = new Texture("assets/images/test.png");
 
@@ -84,8 +96,6 @@ public class LevelEditorScene extends Scene {
 
     @Override
     public void update(float dt) {
-        camera.position.x -= dt * 50.0f;
-
         defaultShader.use();
 
         defaultShader.uploadTexture("TEX_SAMP", 0);
@@ -109,5 +119,17 @@ public class LevelEditorScene extends Scene {
         glBindVertexArray(0);
 
         defaultShader.detach();
+
+        if (firstTime) {
+            System.out.println("Create game object");
+            GameObject go = new GameObject("Game test");
+            go.addComponent(new SpriteRender());
+            this.addGameObjectToScene(go);
+            firstTime = false;
+        }
+
+        for (GameObject go : this.gameObjects) {
+            go.update(dt);
+        }
     }
 }
