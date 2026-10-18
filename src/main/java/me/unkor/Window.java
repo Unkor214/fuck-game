@@ -78,6 +78,10 @@ public class Window {
         return Window.window;
     }
 
+    public static Scene getScene() {
+        return currentScene;
+    }
+
     //фун. запуска
     public void run() {
         init();

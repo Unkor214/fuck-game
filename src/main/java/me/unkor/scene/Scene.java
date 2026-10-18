@@ -7,11 +7,13 @@ package me.unkor.scene;
 
 import me.unkor.Camera;
 import me.unkor.fuck.entity.system.GameObject;
+import me.unkor.render.Render;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Scene {
+    protected Render renderer = new Render();
     protected Camera camera;
     //создано для первого запуска, чтобы добавить объект на сцену
     private boolean isRunning = false;
@@ -31,6 +33,7 @@ public abstract class Scene {
     public void start() {
         for (GameObject go : gameObjects) {
             go.start();
+            this.renderer.add(go);
         }
         isRunning = true;
     }
@@ -42,8 +45,13 @@ public abstract class Scene {
         } else {
             gameObjects.add(go);
             go.start();
+            this.renderer.add(go);
         }
     }
 
     public abstract void update(float dt);
+
+    public Camera getCamera() {
+        return this.camera;
+    }
 }

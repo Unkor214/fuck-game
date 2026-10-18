@@ -1,4 +1,4 @@
-package me.unkor.fuck.entity.components;
+package me.unkor.fuck.entity.components.render;
 
 import me.unkor.fuck.entity.system.Component;
 
