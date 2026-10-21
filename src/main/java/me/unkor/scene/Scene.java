@@ -6,6 +6,7 @@ package me.unkor.scene;
 */
 
 import me.unkor.Camera;
+import me.unkor.Window;
 import me.unkor.fuck.entity.system.GameObject;
 import me.unkor.render.Render;
 

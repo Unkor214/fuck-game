@@ -9,8 +9,6 @@ import me.unkor.util.Time;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
-import java.util.HashMap;
-
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -27,9 +25,7 @@ public class Window {
 
     //пустой класс окна
     private static  Window window = null;
-
-    private static Scene currentScene;
-    //private static HashMap<String, Scene> sceneHashMap = new HashMap<>();
+    private static Scene curentScene;
 
     private Window() {
         //(default) 1920x1080
@@ -45,29 +41,24 @@ public class Window {
         a = 1;
     }
 
-    public static void changeScene(int newScene) {
-        switch (newScene) {
+    public void changeScene(int index) {
+        switch (index) {
             case 0 :
-                currentScene = new LevelEditorScene();
-                currentScene.init();
-                currentScene.start();
+                curentScene = new LevelEditorScene();
+                curentScene.init();
+                curentScene.start();
                 break;
             case 1 :
-                currentScene = new LevelScene();
-                currentScene.init();
-                currentScene.start();
-                break;
-            default:
-                assert false : "Invalid scene '" + newScene + "'";
+                curentScene = new LevelScene();
+                curentScene.init();
+                curentScene.start();
                 break;
         }
     }
 
-    //Пока что не используется
-    /*
-    public static void addScene(Scene scene, String name) {
-        sceneHashMap.put(name, scene);
-    }*/
+    public static Scene getCurentScene() {
+        return curentScene;
+    }
 
     public static Window get() {
         //если переменная окна пустая
@@ -76,10 +67,6 @@ public class Window {
         }
 
         return Window.window;
-    }
-
-    public static Scene getScene() {
-        return currentScene;
     }
 
     //фун. запуска
@@ -145,7 +132,7 @@ public class Window {
         GL.createCapabilities();
 
         // смена сцены на основную
-        Window.changeScene(0);
+        changeScene(0);
     }
 
     //игровой цикл
@@ -163,7 +150,7 @@ public class Window {
             glClear(GL_COLOR_BUFFER_BIT);
 
             if (deltaTime >= 0)
-                currentScene.update(deltaTime);
+                curentScene.update(deltaTime);
 
             glfwSwapBuffers(glfwWindow);
 

@@ -55,7 +55,7 @@ public class RenderBatch {
 
         vboID = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        glBufferData(GL_ARRAY_BUFFER, vertices.length * Float.BYTES, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, (long) vertices.length * Float.BYTES, GL_DYNAMIC_DRAW);
 
         int eboID = glGenBuffers();
         int[] indices = generateIndices();
@@ -89,8 +89,8 @@ public class RenderBatch {
         glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
 
         shader.use();
-        shader.uploadMat4f("uProjection", Window.getScene().getCamera().getProjectionMatrix());
-        shader.uploadMat4f("uView", Window.getScene().getCamera().getViewMatrix());
+        shader.uploadMat4f("uProjMatrix", Window.getCurentScene().getCamera().getProjectionMatrix());
+        shader.uploadMat4f("uViewMatrix", Window.getCurentScene().getCamera().getViewMatrix());
 
         glBindVertexArray(vaoID);
         glEnableVertexAttribArray(0);
@@ -115,18 +115,18 @@ public class RenderBatch {
         float xAdd = 1.0f;
         float yAdd = 1.0f;
         for (int i=0; i < 4; i++) {
-            if (i == 0) {
+            if (i == 1) {
                 yAdd = 0.0f;
-            } else if (i == 1) {
+            } else if (i == 2) {
                 xAdd = 0.0f;
             } else if (i ==3) {
                 yAdd = 1.0f;
             }
 
             vertices[offset] = spriteRender.gameObject.transform.position.x + (
-                    xAdd + spriteRender.gameObject.transform.scale.x);
+                    xAdd * spriteRender.gameObject.transform.scale.x);
             vertices[offset + 1] = spriteRender.gameObject.transform.position.y + (
-                    yAdd + spriteRender.gameObject.transform.scale.y);
+                    yAdd * spriteRender.gameObject.transform.scale.y);
 
             vertices[offset + 2] = color.x;
             vertices[offset + 3] = color.y;
@@ -148,16 +148,16 @@ public class RenderBatch {
 
     private void loadElementIndices(int[] el, int index) {
         int offsetArrayIndex = 6 * index;
-        int offset = 4* index;
+        int offset = 4 * index;
 
         // 3, 2, 0, 0, 2, 1       7, 6, 4, 4, 6, 5
         // Триугольник 1
         el[offsetArrayIndex] = offset + 3;
         el[offsetArrayIndex + 1] = offset + 2;
-        el[offsetArrayIndex + 2] = offset + 0;
+        el[offsetArrayIndex + 2] = offset;
 
         //Триугольник 2
-        el[offsetArrayIndex + 3] = offset + 0;
+        el[offsetArrayIndex + 3] = offset;
         el[offsetArrayIndex + 4] = offset + 2;
         el[offsetArrayIndex + 5] = offset + 1;
     }

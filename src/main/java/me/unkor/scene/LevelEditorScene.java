@@ -35,13 +35,15 @@ public class LevelEditorScene extends Scene {
                 GameObject go = new GameObject("obj" + x + "" + y, new Transform(
                         new Vector2f(xPos, yPos), new Vector2f(sizeX, sizeY)));
                 go.addComponent(new SpriteRender(new Vector4f(xPos / totalWidth, yPos / totalHeight, 1, 1)));
-                addGameObjectToScene(go);
+                this.addGameObjectToScene(go);
             }
         }
     }
 
     @Override
     public void update(float dt) {
+        System.out.println("FPS : " + (1.0f / dt));
+
         for (GameObject go : this.gameObjects) {
             go.update(dt);
         }
