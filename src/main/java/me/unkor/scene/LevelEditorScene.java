@@ -4,6 +4,7 @@ import me.unkor.Camera;
 import me.unkor.Transform;
 import me.unkor.fuck.entity.components.render.SpriteRender;
 import me.unkor.fuck.entity.system.GameObject;
+import me.unkor.util.AssetsPool;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -38,6 +39,12 @@ public class LevelEditorScene extends Scene {
                 this.addGameObjectToScene(go);
             }
         }
+
+        loadContent();
+    }
+
+    public void loadContent() {
+        AssetsPool.getShader("assets/shaders/default.glsl");
     }
 
     @Override

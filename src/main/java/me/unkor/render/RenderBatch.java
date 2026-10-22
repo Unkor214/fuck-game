@@ -3,6 +3,7 @@ package me.unkor.render;
 import me.unkor.Window;
 import me.unkor.fuck.entity.components.render.SpriteRender;
 import me.unkor.fuck.entity.system.Component;
+import me.unkor.util.AssetsPool;
 import org.joml.Vector4f;
 
 import javax.swing.plaf.basic.BasicSeparatorUI;
@@ -37,9 +38,7 @@ public class RenderBatch {
     private Shader shader;
 
     public RenderBatch(int maxBatchSize) {
-        shader = new Shader("assets/shaders/default.glsl");
-        shader.compile();
-
+        shader = AssetsPool.getShader("assets/shaders/default.glsl");
         this.sprites = new SpriteRender[maxBatchSize];
         this.maxBatchSize = maxBatchSize;
 
