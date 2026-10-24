@@ -35,9 +35,9 @@ public class Window {
         //(default)
         this.title = "Fuck-game";
 
-        r = 1;
-        g = 1;
-        b = 1;
+        r = 0;
+        g = 0;
+        b = 0;
         a = 1;
     }
 
@@ -164,6 +164,13 @@ public class Window {
     public void setResolve(int w, int h) {
         Window.get().width = w;
         Window.get().height = h;
+    }
+
+    public void setColor(float r, float g, float b, float a) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
     }
 
     public void setTitle(String title) {

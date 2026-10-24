@@ -4,9 +4,13 @@ import me.unkor.Window;
 import me.unkor.fuck.entity.components.render.SpriteRender;
 import me.unkor.fuck.entity.system.Component;
 import me.unkor.util.AssetsPool;
+import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 import javax.swing.plaf.basic.BasicSeparatorUI;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -16,23 +20,30 @@ public class RenderBatch {
     * Verticals
     * ------------
     *
-    * Position               color
-    * float x, float y,      float r, float g, float b, float a,
+    * Position          color                               texture pos   texID
+    * float x, float y, float r, float g, float b, float a, float, float, float
     * */
     private final int POS_SIZE = 2;
     private final int COLOR_SIZE = 4;
+    private final int TEXTURE_POS_SIZE = 2;
+    private final int TEXTURE_ID_SIZE = 1;
 
     private final int POS_OFFSET = 0;
     private final int COLOR_OFFSET = POS_OFFSET + POS_SIZE * Float.BYTES;
+    private final int TEXTURE_POS_OFFSET = COLOR_OFFSET + COLOR_SIZE * Float.BYTES;
+    private final int TEXTURE_ID_OFFSET = TEXTURE_POS_OFFSET + TEXTURE_POS_SIZE * Float.BYTES;
 
-    private final int VERTEX_SIZE = 6;
+    private final int VERTEX_SIZE = 9;
     private final int VERTEX_SIZE_BYTES = VERTEX_SIZE * Float.BYTES;
 
     private SpriteRender[] sprites;
     private int numOfSprites;
     private float[] vertices;
+    private int[] texSlot = {0, 1, 2, 3, 4, 5, 6, 7};
+
     private boolean hasRoom;
 
+    private List<Texture> textures;
     private int vaoID, vboID;
     private int maxBatchSize;
     private Shader shader;
@@ -46,6 +57,7 @@ public class RenderBatch {
 
         this.numOfSprites = 0;
         this.hasRoom = true;
+        this.textures = new ArrayList<>();
     }
 
     public void start() {
@@ -69,12 +81,25 @@ public class RenderBatch {
                 VERTEX_SIZE_BYTES, COLOR_OFFSET);
         glEnableVertexAttribArray(1);
 
+        glVertexAttribPointer(2, TEXTURE_POS_SIZE, GL_FLOAT, false,
+                VERTEX_SIZE_BYTES, TEXTURE_POS_OFFSET);
+        glEnableVertexAttribArray(2);
+
+        glVertexAttribPointer(3, TEXTURE_ID_SIZE, GL_FLOAT, false,
+                VERTEX_SIZE_BYTES, TEXTURE_ID_OFFSET);
+        glEnableVertexAttribArray(3);
     }
 
     public void addSprite(SpriteRender spriteRender) {
         int index = this.numOfSprites;
         this.sprites[index] = spriteRender;
         this.numOfSprites ++;
+
+        if (spriteRender.getTexture() != null) {
+            if (!textures.contains(spriteRender.getTexture())) {
+                textures.add(spriteRender.getTexture());
+            }
+        }
 
         loadVertexProperties(index);
 
@@ -91,6 +116,12 @@ public class RenderBatch {
         shader.uploadMat4f("uProjMatrix", Window.getCurentScene().getCamera().getProjectionMatrix());
         shader.uploadMat4f("uViewMatrix", Window.getCurentScene().getCamera().getViewMatrix());
 
+        for (int i=0; i < textures.size(); i++) {
+            glActiveTexture(GL_TEXTURE0 + i + 1);
+            textures.get(i).bind();
+        }
+        shader.uploadIntArray("uTextures", texSlot);
+
         glBindVertexArray(vaoID);
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
@@ -101,6 +132,10 @@ public class RenderBatch {
         glDisableVertexAttribArray(1);
         glBindVertexArray(0);
 
+        for (int i=0; i < textures.size(); i++) {
+            textures.get(i).unbind();
+        }
+
         shader.detach();
     }
 
@@ -110,6 +145,17 @@ public class RenderBatch {
         int offset = index * 4 * VERTEX_SIZE;
 
         Vector4f color = spriteRender.getColor();
+        Vector2f[] texturePos = spriteRender.getTexturePos();
+
+        int texID = 0;
+        if (spriteRender.getTexture() != null) {
+            for (int i=0; i < textures.size(); i++) {
+                if (textures.get(i) == spriteRender.getTexture()) {
+                    texID = i + 1;
+                    break;
+                }
+            }
+        }
 
         float xAdd = 1.0f;
         float yAdd = 1.0f;
@@ -122,15 +168,24 @@ public class RenderBatch {
                 yAdd = 1.0f;
             }
 
+            //load pos
             vertices[offset] = spriteRender.gameObject.transform.position.x + (
                     xAdd * spriteRender.gameObject.transform.scale.x);
             vertices[offset + 1] = spriteRender.gameObject.transform.position.y + (
                     yAdd * spriteRender.gameObject.transform.scale.y);
 
+            //load color
             vertices[offset + 2] = color.x;
             vertices[offset + 3] = color.y;
             vertices[offset + 4] = color.z;
             vertices[offset + 5] = color.w;
+
+            //load texture pos
+            vertices[offset + 6] = texturePos[i].x;
+            vertices[offset + 7] = texturePos[i].y;
+
+            //load texID
+            vertices[offset + 8] = texID;
 
             offset += VERTEX_SIZE;
         }

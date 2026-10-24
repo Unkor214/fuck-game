@@ -50,6 +50,8 @@ public abstract class Scene {
         }
     }
 
+    public abstract void loadContent();
+
     public abstract void update(float dt);
 
     public Camera getCamera() {
